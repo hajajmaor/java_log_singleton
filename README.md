@@ -78,4 +78,4 @@ The workspace contains two folders by default, where:
 [//]: #
 [vscode]: https://code.visualstudio.com/
 [idea]: https://www.jetbrains.com/idea/
-[mit]: (https://choosealicense.com/licenses/mit/)
+[mit]: https://choosealicense.com/licenses/mit/
