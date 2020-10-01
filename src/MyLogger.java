@@ -1,44 +1,69 @@
-import java.io.File;
+
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Paths;
 import java.util.logging.*;
 
 /**
- * MyLogger
+ * {@link MyLogger}
+ * <p>
+ * using the Singleton pattern to ensure only one log will be used in the
+ * application. this way, developers can use the single logger to address all
+ * the needs in their app.
  */
 public class MyLogger {
-    final Logger _logger = Logger.getLogger("test app");
     static private MyLogger instance;
+    final Logger log = Logger.getLogger("app_main_log");
 
     // private constructor to avoid client applications to use constructor
     private MyLogger() {
         try {
+            final var dir = "logs";
+            final var fileName = "log_file.log";
+            final String filepath = String.format("%s/%s", dir, fileName);
 
-            var currentDir = MyLogger.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            int lastIndex = currentDir.lastIndexOf("/");
-            System.out.println("currentDir: " + currentDir);
-            currentDir = currentDir.substring(0, lastIndex);
-            System.out.println("update currentDir: " + currentDir);
-            final String filepath = currentDir + "/logs/MyLogFile.log";
+            try {
+                // create new dir
+                Path path = Paths.get(dir + "/");
+                Files.createDirectory(path);
+
+            } catch (FileAlreadyExistsException e) {
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                // create new dir
+                Path path = Paths.get(filepath);
+                Files.createFile(path);
+
+            } catch (FileAlreadyExistsException e) {
+                // if the file exists, great
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // log file full path
+
+            // sysout the file full path
+            // System.out.println("file path: " + filepath);
 
             FileHandler fh;
+            /**
+             * logger listen to all messages
+             */
+            log.setLevel(Level.ALL);
 
-            File myObj = new File(filepath);
-            _logger.setLevel(Level.ALL);
-
-            if (myObj.createNewFile())
-                System.out.println("log file created!!");
-            // else
-            // System.out.println("file already existed");
+            // file handler will handle the log, true is for appending the log messages
             fh = new FileHandler(filepath, true);
-            _logger.addHandler(fh);
+            log.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
     }
